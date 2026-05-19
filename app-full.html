@@ -7,25 +7,50 @@
     <link rel="stylesheet" href="app-styles.css">
 </head>
 <body>
+    <div class="page-header">
+        <div class="page-title">가족 케어 앱</div>
+        <div class="page-subtitle">실시간 건강 모니터링 · 가족 채팅 · 스마트 알림</div>
+    </div>
+
     <div class="demo-container">
         <!-- 보호자 앱 -->
-        <div class="phone" id="guardianPhone">
+        <div class="phone-wrapper">
             <div class="phone-label">보호자 앱</div>
-            <div class="screen" id="guardianScreen"></div>
+            <div class="phone" id="guardianPhone">
+                <div class="status-bar">
+                    <span class="status-time">9:41</span>
+                    <div class="status-icons"><span>LTE</span><span>📶</span><span>🔋</span></div>
+                </div>
+                <div class="screen" id="guardianScreen"></div>
+            </div>
         </div>
 
         <!-- 가족 채팅 -->
-        <div class="phone" id="familyPhone">
+        <div class="phone-wrapper">
             <div class="phone-label">가족 채팅 (다른 가족)</div>
-            <div class="screen" id="familyScreen"></div>
+            <div class="phone" id="familyPhone">
+                <div class="status-bar">
+                    <span class="status-time">9:41</span>
+                    <div class="status-icons"><span>LTE</span><span>📶</span><span>🔋</span></div>
+                </div>
+                <div class="screen" id="familyScreen"></div>
+            </div>
         </div>
 
         <!-- 어르신 앱 -->
-        <div class="phone" id="elderPhone">
+        <div class="phone-wrapper">
             <div class="phone-label">어르신 앱</div>
-            <div class="screen" id="elderScreen"></div>
+            <div class="phone" id="elderPhone">
+                <div class="status-bar">
+                    <span class="status-time">9:41</span>
+                    <div class="status-icons"><span>LTE</span><span>📶</span><span>🔋</span></div>
+                </div>
+                <div class="screen" id="elderScreen"></div>
+            </div>
         </div>
     </div>
+
+    <div class="toast" id="appToast"></div>
 
     <script src="app-data.js"></script>
     <script src="app-guardian.js"></script>
