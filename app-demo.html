@@ -6,554 +6,834 @@
     <title>가족 케어 앱 - 인터랙티브 데모</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
-            font-family: -apple-system, sans-serif;
-            background: #e0e0e0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: -apple-system, 'Malgun Gothic', sans-serif;
+            background: linear-gradient(150deg, #0d47a1 0%, #1976d2 45%, #42a5f5 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 48px 20px 56px;
         }
 
+        /* 페이지 헤더 */
+        .page-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 44px;
+        }
+        .page-title {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .page-subtitle {
+            font-size: 15px;
+            opacity: 0.75;
+            letter-spacing: 0.5px;
+        }
+
+        /* 데모 컨테이너 */
         .demo-container {
             display: flex;
-            gap: 20px;
+            gap: 32px;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: flex-start;
         }
 
-        .phone {
-            width: 380px;
-            height: 720px;
-            background: white;
-            border-radius: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            overflow: hidden;
-            position: relative;
+        /* 폰 래퍼 */
+        .phone-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
         }
 
         .phone-label {
-            position: absolute;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
+            background: rgba(255,255,255,0.18);
             color: white;
-            padding: 4px 12px;
-            border-radius: 4px;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.25);
+        }
+
+        /* 폰 프레임 */
+        .phone {
+            width: 375px;
+            height: 720px;
+            background: #f5f5f5;
+            border-radius: 44px;
+            box-shadow:
+                0 0 0 8px #111,
+                0 0 0 11px #333,
+                0 32px 80px rgba(0,0,0,0.55);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 상태바 */
+        .status-bar {
+            background: #1976d2;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 18px;
             font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+            height: 26px;
         }
+        .status-icons { display: flex; gap: 5px; align-items: center; font-size: 11px; }
 
+        /* 스크린 */
         .screen {
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
 
-        /* 공통 스타일 */
+        /* 화면 뷰 */
+        .screen-view {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+            min-height: 0;
+        }
+        .screen-view.hidden { display: none !important; }
+
+        /* 헤더 */
         .header {
             background: #1976d2;
             color: white;
-            padding: 16px;
+            padding: 13px 16px;
+            flex-shrink: 0;
         }
+        .header.row { display: flex; align-items: center; }
+        .elder-name { font-size: 18px; font-weight: 700; }
+        .last-update { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+        .header-title { font-size: 17px; font-weight: 700; flex: 1; }
+        .header-sub { font-size: 12px; opacity: 0.75; }
 
-        .elder-name { font-size: 20px; font-weight: bold; }
-        .last-update { font-size: 13px; opacity: 0.9; margin-top: 4px; }
-
-        .alert-banner {
-            background: #f44336;
-            color: white;
-            padding: 12px 16px;
-            font-size: 14px;
-        }
-
-        .cards { padding: 16px; }
-
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .card-title { font-size: 14px; color: #666; margin-bottom: 8px; }
-        .card-value { font-size: 28px; font-weight: bold; margin-bottom: 4px; }
-        .card-status {
-            font-size: 13px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        .status-normal { background: #e8f5e9; color: #2e7d32; }
-        .status-warning { background: #fff3e0; color: #f57c00; }
-        .status-danger { background: #ffebee; color: #c62828; }
-
-        .card.danger { border-left: 4px solid #f44336; }
-
-        .bottom-nav {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            display: flex;
-            border-top: 1px solid #ddd;
-        }
-
-        .nav-btn {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            border: none;
-            background: white;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        .nav-btn.active { color: #1976d2; font-weight: bold; }
-
-        /* 채팅 스타일 */
         .back-btn {
             background: none;
             border: none;
             color: white;
-            font-size: 20px;
-            margin-right: 12px;
+            font-size: 26px;
+            margin-right: 8px;
             cursor: pointer;
+            line-height: 1;
+            padding: 0 4px;
         }
 
-        .header-title { font-size: 18px; font-weight: bold; }
+        /* 배너 */
+        .alert-banner {
+            background: #d32f2f;
+            color: white;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .alert-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: blink 1.4s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.25; }
+        }
 
         .alert-context {
-            background: #fff3e0;
-            padding: 12px 16px;
+            background: #fff8e1;
+            padding: 9px 16px;
             font-size: 13px;
-            color: #f57c00;
+            color: #e65100;
+            font-weight: 500;
+            flex-shrink: 0;
         }
 
-        .chat-list {
-            padding: 16px;
-            min-height: 400px;
+        /* 스크롤 영역 */
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+        .scroll-area::-webkit-scrollbar { width: 3px; }
+        .scroll-area::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+        /* 카드 */
+        .cards { padding: 14px 14px 8px; }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 15px 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+            border: 1px solid #eee;
+        }
+        .card.danger {
+            border-left: 4px solid #d32f2f;
+            background: #fff9f9;
+        }
+
+        .card-title { font-size: 12px; color: #999; margin-bottom: 5px; font-weight: 500; letter-spacing: 0.3px; }
+        .card-value { font-size: 26px; font-weight: 700; color: #111; margin-bottom: 6px; }
+        .card-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .status-normal { background: #e8f5e9; color: #2e7d32; }
+        .status-warning { background: #fff3e0; color: #e65100; }
+        .status-danger { background: #ffebee; color: #c62828; }
+
+        /* 바텀 네비 */
+        .bottom-nav {
+            background: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            flex-shrink: 0;
+        }
+        .nav-btn {
+            flex: 1;
+            padding: 9px 4px 10px;
+            text-align: center;
+            border: none;
+            background: none;
+            font-size: 10px;
+            color: #bbb;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            transition: color 0.15s;
+        }
+        .nav-icon { font-size: 19px; line-height: 1; }
+        .nav-btn.active { color: #1976d2; }
+        .nav-btn:hover:not(.active) { color: #888; }
+
+        /* 채팅 */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 14px 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            min-height: 0;
+        }
+        .chat-area::-webkit-scrollbar { width: 3px; }
+        .chat-area::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+        .system-msg {
+            text-align: center;
+            font-size: 11px;
+            color: #bbb;
+            margin: 4px 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .system-msg::before, .system-msg::after {
+            content: ''; flex: 1; height: 1px; background: #eee;
         }
 
         .msg {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             display: flex;
             flex-direction: column;
         }
-
-        .msg-header { font-size: 12px; color: #666; margin-bottom: 4px; }
-
+        .msg-header { font-size: 11px; color: #bbb; margin-bottom: 4px; }
         .msg-bubble {
-            background: white;
-            padding: 12px;
-            border-radius: 8px;
-            max-width: 70%;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            background: #f1f3f4;
+            padding: 9px 13px;
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+            max-width: 78%;
+            font-size: 14px;
+            line-height: 1.45;
+            color: #1a1a1a;
+            word-break: break-word;
         }
-
         .msg.me { align-items: flex-end; }
-        .msg.me .msg-bubble { background: #1976d2; color: white; }
-
-        .quick-reply {
-            padding: 12px 16px;
-            background: white;
-            border-top: 1px solid #ddd;
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
+        .msg.me .msg-header { text-align: right; }
+        .msg.me .msg-bubble {
+            background: #1976d2;
+            color: white;
+            border-radius: 18px;
+            border-bottom-right-radius: 5px;
         }
 
+        /* 빠른 답장 */
+        .quick-reply {
+            padding: 9px 14px;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 7px;
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+        .quick-reply::-webkit-scrollbar { display: none; }
         .quick-btn {
-            padding: 8px 16px;
-            background: #e3f2fd;
-            border: none;
-            border-radius: 16px;
-            font-size: 13px;
+            padding: 7px 13px;
+            background: #e8f0fe;
+            color: #1565c0;
+            border: 1px solid #c5d8f8;
+            border-radius: 20px;
+            font-size: 12px;
             white-space: nowrap;
             cursor: pointer;
+            font-weight: 500;
+            transition: background 0.15s;
+            flex-shrink: 0;
         }
+        .quick-btn:hover { background: #d0e4fd; }
 
+        /* 입력창 */
         .input-area {
-            padding: 12px 16px;
+            padding: 9px 13px;
             background: white;
-            border-top: 1px solid #ddd;
+            border-top: 1px solid #f0f0f0;
             display: flex;
             gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
         }
-
         .msg-input {
             flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
+            padding: 8px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 22px;
             font-size: 14px;
+            background: #f7f7f7;
+            outline: none;
+            font-family: inherit;
         }
-
+        .msg-input:focus { border-color: #1976d2; background: white; }
         .send-btn {
-            padding: 10px 20px;
+            width: 36px; height: 36px;
             background: #1976d2;
             color: white;
             border: none;
-            border-radius: 20px;
+            border-radius: 50%;
             cursor: pointer;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.15s;
         }
+        .send-btn:hover { background: #1565c0; }
 
-        /* 어르신 스타일 */
+        /* 알림 목록 */
+        .alert-list { padding: 14px; }
+        .alert-item {
+            background: white;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+            border: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .alert-item:hover { background: #f9f9f9; }
+        .alert-item.resolved { opacity: 0.55; }
+        .alert-item-type { font-size: 12px; font-weight: 600; color: #d32f2f; margin-bottom: 5px; }
+        .alert-item.resolved .alert-item-type { color: #999; }
+        .alert-item-desc { font-size: 14px; color: #222; margin-bottom: 6px; }
+        .alert-item-time { font-size: 12px; color: #bbb; }
+
+        /* 어르신 화면 */
         .elder-screen {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 24px;
-            min-height: 100%;
+            padding: 28px 22px;
+            flex: 1;
+            background: linear-gradient(180deg, #fff 0%, #f0f4ff 100%);
         }
-
-        .main-msg { text-align: center; margin-bottom: 48px; }
-
+        .main-msg { text-align: center; margin-bottom: 36px; }
         .main-text {
-            font-size: 36px;
-            line-height: 1.4;
-            color: #1976d2;
-            font-weight: 500;
+            font-size: 30px;
+            line-height: 1.55;
+            color: #1565c0;
+            font-weight: 700;
         }
-
-        .emoji { font-size: 48px; margin-top: 16px; }
-        .member-list { font-size: 24px; color: #666; margin-top: 12px; }
+        .emoji-row { font-size: 50px; margin: 12px 0 8px; }
+        .member-list { font-size: 18px; color: #999; margin-top: 4px; }
 
         .msg-preview {
             background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 32px;
+            border-radius: 18px;
+            padding: 20px 22px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.09);
+            margin-bottom: 24px;
+            border: 1px solid #eef0ff;
         }
-
-        .msg-sender { font-size: 20px; color: #666; margin-bottom: 12px; }
-        .msg-content { font-size: 26px; line-height: 1.5; color: #333; }
+        .msg-sender { font-size: 17px; color: #999; margin-bottom: 9px; }
+        .msg-content { font-size: 22px; line-height: 1.6; color: #1a1a1a; }
 
         .btn-view-msg {
             width: 100%;
-            height: 80px;
+            height: 66px;
             background: #1976d2;
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 28px;
+            border-radius: 16px;
+            font-size: 22px;
+            font-weight: 700;
             cursor: pointer;
+            transition: background 0.15s;
+            letter-spacing: -0.3px;
+        }
+        .btn-view-msg:hover { background: #1565c0; }
+
+        /* 토스트 */
+        .toast {
+            position: absolute;
+            bottom: 74px;
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            background: rgba(30,30,30,0.82);
+            color: white;
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.25s, transform 0.25s;
+            z-index: 200;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
-        @media (max-width: 800px) {
-            .demo-container { flex-direction: column; }
+        @media (max-width: 960px) {
+            .demo-container { flex-direction: column; align-items: center; }
         }
-
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <div class="demo-container">
-        <!-- 보호자 대시보드 -->
-        <div class="phone" id="guardianPhone">
-            <div class="phone-label">보호자 앱</div>
+
+<div class="page-header">
+    <div class="page-title">가족 케어 앱</div>
+    <div class="page-subtitle">실시간 건강 모니터링 · 가족 채팅 · 스마트 알림</div>
+</div>
+
+<div class="demo-container">
+
+    <!-- ─── 보호자 앱 ─── -->
+    <div class="phone-wrapper">
+        <div class="phone-label">보호자 앱</div>
+        <div class="phone">
+            <div class="status-bar">
+                <span class="status-time">9:41</span>
+                <div class="status-icons"><span>LTE</span><span>📶</span><span>🔋</span></div>
+            </div>
             <div class="screen">
-                <!-- 대시보드 화면 -->
-                <div id="guardianDashboard">
+
+                <!-- 대시보드 -->
+                <div class="screen-view" id="guardianDashboard">
                     <div class="header">
                         <div class="elder-name">김순자 어머니</div>
-                        <div class="last-update" id="lastUpdate">마지막 업데이트: 5분 전</div>
+                        <div class="last-update" id="lastUpdate">마지막 업데이트: 방금 전</div>
                     </div>
-
-                    <div class="alert-banner" id="alertBanner">
-                        ⚠️ 2시간 이상 움직임이 감지되지 않았어요
+                    <div class="alert-banner">
+                        <div class="alert-dot"></div>
+                        2시간 이상 움직임이 감지되지 않았어요
                     </div>
-
-                    <div class="cards">
-                        <div class="card danger" id="activityCard">
-                            <div class="card-title">활동량</div>
-                            <div class="card-value" id="activityValue">1,200 걸음</div>
-                            <div class="card-status status-danger" id="activityStatus">마지막 움직임: 2시간 전</div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-title">심박수</div>
-                            <div class="card-value" id="heartValue">72 bpm</div>
-                            <div class="card-status status-normal">정상</div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-title">수면</div>
-                            <div class="card-value" id="sleepValue">7시간 20분</div>
-                            <div class="card-status status-normal">정상</div>
+                    <div class="scroll-area">
+                        <div class="cards">
+                            <div class="card danger">
+                                <div class="card-title">활동량</div>
+                                <div class="card-value" id="activityValue">1,200 걸음</div>
+                                <div class="card-status status-danger">마지막 움직임: 2시간 전</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">심박수</div>
+                                <div class="card-value" id="heartValue">72 bpm</div>
+                                <div class="card-status status-normal">정상 범위</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">수면</div>
+                                <div class="card-value">7시간 20분</div>
+                                <div class="card-status status-normal">양호</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-title">복약</div>
+                                <div class="card-value">오전 ✓</div>
+                                <div class="card-status status-normal">복약 완료</div>
+                            </div>
                         </div>
                     </div>
-
                     <div class="bottom-nav">
-                        <button class="nav-btn active" onclick="showGuardianDashboard()">홈</button>
-                        <button class="nav-btn" onclick="showGuardianChat()">채팅</button>
-                        <button class="nav-btn" onclick="alert('알림 화면 (미구현)')">알림</button>
-                        <button class="nav-btn" onclick="alert('설정 화면 (미구현)')">설정</button>
+                        <button class="nav-btn active" onclick="switchGuardian('guardianDashboard')">
+                            <span class="nav-icon">🏠</span>홈
+                        </button>
+                        <button class="nav-btn" onclick="switchGuardian('guardianChat')">
+                            <span class="nav-icon">💬</span>채팅
+                        </button>
+                        <button class="nav-btn" onclick="switchGuardian('guardianAlerts')">
+                            <span class="nav-icon">🔔</span>알림
+                        </button>
+                        <button class="nav-btn" onclick="showToast('gToast', '준비 중입니다')">
+                            <span class="nav-icon">⚙️</span>설정
+                        </button>
                     </div>
                 </div>
 
-                <!-- 채팅 화면 -->
-                <div id="guardianChat" class="hidden">
-                    <div class="header" style="display: flex; align-items: center;">
-                        <button class="back-btn" onclick="showGuardianDashboard()">←</button>
+                <!-- 채팅 -->
+                <div class="screen-view hidden" id="guardianChat">
+                    <div class="header row">
+                        <button class="back-btn" onclick="switchGuardian('guardianDashboard', null)">‹</button>
                         <div class="header-title">가족 채팅</div>
+                        <div class="header-sub">구성원 3명</div>
                     </div>
-
-                    <div class="alert-context">
-                        ⚠️ 오후 2시 – 움직임 없음 감지됨
-                    </div>
-
-                    <div class="chat-list" id="guardianChatList">
-                        <!-- 메시지 동적 생성 -->
-                    </div>
-
+                    <div class="alert-context">⚠️ 오후 2:00 – 움직임 없음 감지됨</div>
+                    <div class="chat-area" id="guardianChatArea"></div>
                     <div class="quick-reply">
-                        <button class="quick-btn" onclick="sendQuickMsg('내가 전화할게')">내가 전화할게</button>
-                        <button class="quick-btn" onclick="sendQuickMsg('확인했어')">확인했어</button>
-                        <button class="quick-btn" onclick="sendQuickMsg('괜찮으신 것 같아')">괜찮으신 것 같아</button>
+                        <button class="quick-btn" onclick="sendQuickMsg('내가 전화할게')">📞 내가 전화할게</button>
+                        <button class="quick-btn" onclick="sendQuickMsg('확인했어')">✓ 확인했어</button>
+                        <button class="quick-btn" onclick="sendQuickMsg('괜찮으신 것 같아')">😌 괜찮으신 것 같아</button>
                     </div>
-
                     <div class="input-area">
-                        <input type="text" class="msg-input" id="guardianMsgInput" placeholder="메시지 입력" onkeypress="if(event.key==='Enter') sendGuardianMsg()">
-                        <button class="send-btn" onclick="sendGuardianMsg()">전송</button>
+                        <input type="text" class="msg-input" id="guardianMsgInput"
+                               placeholder="메시지 입력..."
+                               onkeydown="if(event.key==='Enter') sendGuardianMsg()">
+                        <button class="send-btn" onclick="sendGuardianMsg()">↑</button>
+                    </div>
+                    <div class="bottom-nav">
+                        <button class="nav-btn" onclick="switchGuardian('guardianDashboard')">
+                            <span class="nav-icon">🏠</span>홈
+                        </button>
+                        <button class="nav-btn active" onclick="switchGuardian('guardianChat')">
+                            <span class="nav-icon">💬</span>채팅
+                        </button>
+                        <button class="nav-btn" onclick="switchGuardian('guardianAlerts')">
+                            <span class="nav-icon">🔔</span>알림
+                        </button>
+                        <button class="nav-btn" onclick="showToast('gToast', '준비 중입니다')">
+                            <span class="nav-icon">⚙️</span>설정
+                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- 가족 채팅 (다른 가족 시점) -->
-        <div class="phone" id="familyPhone">
-            <div class="phone-label">가족 채팅 (다른 가족)</div>
-            <div class="screen">
-                <div class="header" style="display: flex; align-items: center;">
+                <!-- 알림 -->
+                <div class="screen-view hidden" id="guardianAlerts">
+                    <div class="header">
+                        <div class="elder-name">알림</div>
+                    </div>
+                    <div class="scroll-area">
+                        <div class="alert-list">
+                            <div class="alert-item" onclick="switchGuardian('guardianChat', null)">
+                                <div class="alert-item-type">⚠️ 미해결 · 움직임 없음</div>
+                                <div class="alert-item-desc">2시간 이상 활동이 감지되지 않았어요</div>
+                                <div class="alert-item-time">오늘 오후 2:00</div>
+                            </div>
+                            <div class="alert-item resolved">
+                                <div class="alert-item-type">✓ 해결됨 · 외출</div>
+                                <div class="alert-item-desc">어머니가 외출하셨어요</div>
+                                <div class="alert-item-time">어제 오전 10:30</div>
+                            </div>
+                            <div class="alert-item resolved">
+                                <div class="alert-item-type">✓ 해결됨 · 복약</div>
+                                <div class="alert-item-desc">오전 복약을 완료했어요</div>
+                                <div class="alert-item-time">어제 오전 9:05</div>
+                            </div>
+                            <div class="alert-item resolved">
+                                <div class="alert-item-type">✓ 해결됨 · 낙상 감지</div>
+                                <div class="alert-item-desc">낙상이 의심됐으나 본인 확인 완료</div>
+                                <div class="alert-item-time">3일 전 오후 4:22</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bottom-nav">
+                        <button class="nav-btn" onclick="switchGuardian('guardianDashboard')">
+                            <span class="nav-icon">🏠</span>홈
+                        </button>
+                        <button class="nav-btn" onclick="switchGuardian('guardianChat')">
+                            <span class="nav-icon">💬</span>채팅
+                        </button>
+                        <button class="nav-btn active" onclick="switchGuardian('guardianAlerts')">
+                            <span class="nav-icon">🔔</span>알림
+                        </button>
+                        <button class="nav-btn" onclick="showToast('gToast', '준비 중입니다')">
+                            <span class="nav-icon">⚙️</span>설정
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="toast" id="gToast"></div>
+        </div>
+    </div>
+
+    <!-- ─── 가족 채팅 ─── -->
+    <div class="phone-wrapper">
+        <div class="phone-label">가족 채팅 (다른 가족)</div>
+        <div class="phone">
+            <div class="status-bar">
+                <span class="status-time">9:41</span>
+                <div class="status-icons"><span>LTE</span><span>📶</span><span>🔋</span></div>
+            </div>
+            <div class="screen" style="display:flex;flex-direction:column;">
+                <div class="header row">
                     <div class="header-title">가족 채팅</div>
+                    <div class="header-sub">구성원 3명</div>
                 </div>
-
-                <div class="alert-context">
-                    ⚠️ 오후 2시 – 움직임 없음 감지됨
-                </div>
-
-                <div class="chat-list" id="familyChatList">
-                    <!-- 메시지 동적 생성 -->
-                </div>
-
+                <div class="alert-context">⚠️ 오후 2:00 – 움직임 없음 감지됨</div>
+                <div class="chat-area" id="familyChatArea"></div>
                 <div class="quick-reply">
-                    <button class="quick-btn" onclick="sendFamilyQuickMsg('내가 전화할게')">내가 전화할게</button>
-                    <button class="quick-btn" onclick="sendFamilyQuickMsg('확인했어')">확인했어</button>
-                    <button class="quick-btn" onclick="sendFamilyQuickMsg('괜찮으신 것 같아')">괜찮으신 것 같아</button>
+                    <button class="quick-btn" onclick="sendFamilyQuickMsg('내가 전화할게')">📞 내가 전화할게</button>
+                    <button class="quick-btn" onclick="sendFamilyQuickMsg('확인했어')">✓ 확인했어</button>
+                    <button class="quick-btn" onclick="sendFamilyQuickMsg('괜찮으신 것 같아')">😌 괜찮으신 것 같아</button>
                 </div>
-
                 <div class="input-area">
-                    <input type="text" class="msg-input" id="familyMsgInput" placeholder="메시지 입력" onkeypress="if(event.key==='Enter') sendFamilyMsg()">
-                    <button class="send-btn" onclick="sendFamilyMsg()">전송</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 어르신 홈 -->
-        <div class="phone" id="elderPhone">
-            <div class="phone-label">어르신 앱</div>
-            <div class="screen">
-                <div class="elder-screen">
-                    <div class="main-msg">
-                        <div class="main-text">
-                            오늘 <span id="elderMemberNames">아들·딸</span><br>
-                            <span id="elderCheckCount">2</span> 명이<br>
-                            확인했어요
-                        </div>
-                        <div class="emoji">💙</div>
-                        <div class="member-list" id="elderMemberDetail">김철수, 김민지</div>
-                    </div>
-
-                    <div class="msg-preview">
-                        <div class="msg-sender" id="elderMsgSender">딸 (김민지)</div>
-                        <div class="msg-content" id="elderMsgContent">
-                            엄마 내일 퇴근하고 들를게요!<br>
-                            맛있는 거 사갈게요 😊
-                        </div>
-                    </div>
-
-                    <button class="btn-view-msg" onclick="alert('메시지 목록 화면 (미구현)')">
-                        가족 메시지 전체 보기
-                    </button>
+                    <input type="text" class="msg-input" id="familyMsgInput"
+                           placeholder="메시지 입력..."
+                           onkeydown="if(event.key==='Enter') sendFamilyMsg()">
+                    <button class="send-btn" onclick="sendFamilyMsg()">↑</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // 전역 상태
-        let messages = [
-            { sender: '딸 (김민지)', content: '내가 전화해볼게', time: '14:05', isGuardian: false },
-            { sender: '보호자 (나)', content: '주무시고 계셨대요', time: '14:12', isGuardian: true },
-            { sender: '아들 (김철수)', content: '다행이네요. 저녁에 제가 들를게요', time: '14:15', isGuardian: false }
-        ];
+    <!-- ─── 어르신 앱 ─── -->
+    <div class="phone-wrapper">
+        <div class="phone-label">어르신 앱</div>
+        <div class="phone">
+            <div class="status-bar">
+                <span class="status-time">9:41</span>
+                <div class="status-icons"><span>LTE</span><span>📶</span><span>🔋</span></div>
+            </div>
+            <div class="screen">
+                <div class="screen-view" id="elderHome">
+                    <div class="elder-screen">
+                        <div class="main-msg">
+                            <div class="main-text">
+                                오늘 <span id="elderNames">아들·딸</span><br>
+                                <span id="elderCount">2</span>명이<br>확인했어요
+                            </div>
+                            <div class="emoji-row">💙</div>
+                            <div class="member-list" id="elderMembers">김철수, 김민지</div>
+                        </div>
 
-        let checkCount = 2;
-        let checkedMembers = ['김철수', '김민지'];
+                        <div class="msg-preview">
+                            <div class="msg-sender" id="elderSender">딸 (김민지)</div>
+                            <div class="msg-content" id="elderContent">
+                                엄마 내일 퇴근하고 들를게요!<br>맛있는 거 사갈게요 😊
+                            </div>
+                        </div>
 
-        // 초기화
-        function init() {
-            renderChatMessages();
-            updateElderScreen();
+                        <button class="btn-view-msg" onclick="switchElder('elderMsgList')">
+                            가족 메시지 전체 보기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 어르신 메시지 목록 -->
+                <div class="screen-view hidden" id="elderMsgList">
+                    <div class="header row">
+                        <button class="back-btn" onclick="switchElder('elderHome')">‹</button>
+                        <div class="header-title">가족 메시지</div>
+                    </div>
+                    <div class="scroll-area" id="elderMsgListArea" style="padding: 16px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ── 상태 ──────────────────────────────────────────────────
+    let messages = [
+        { sender: '딸 (김민지)', content: '내가 전화해볼게', time: '14:05', isGuardian: false },
+        { sender: '보호자 (나)',  content: '주무시고 계셨대요',  time: '14:12', isGuardian: true  },
+        { sender: '아들 (김철수)', content: '다행이네요. 저녁에 제가 들를게요', time: '14:15', isGuardian: false }
+    ];
+
+    let checkCount = 2;
+    let checkedMembers = ['김철수', '김민지'];
+
+    // ── 초기화 ────────────────────────────────────────────────
+    function init() {
+        updateStatusTimes();
+        setInterval(updateStatusTimes, 30000);
+        renderChats();
+        renderElderMsgList();
+        setInterval(simulateHealth, 6000);
+    }
+
+    function updateStatusTimes() {
+        const now = new Date();
+        const t = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+        document.querySelectorAll('.status-time').forEach(el => el.textContent = t);
+    }
+
+    // ── 채팅 렌더링 ───────────────────────────────────────────
+    function renderChats() {
+        const gArea = document.getElementById('guardianChatArea');
+        const fArea = document.getElementById('familyChatArea');
+
+        gArea.innerHTML = '';
+        fArea.innerHTML = '';
+
+        const sysMsg = document.createElement('div');
+        sysMsg.className = 'system-msg';
+        sysMsg.textContent = '오후 2:00 · 알림 발생';
+        gArea.appendChild(sysMsg.cloneNode(true));
+        fArea.appendChild(sysMsg.cloneNode(true));
+
+        messages.forEach(msg => {
+            gArea.appendChild(makeBubble(msg, msg.isGuardian));
+            fArea.appendChild(makeBubble(msg, !msg.isGuardian));
+        });
+
+        gArea.scrollTop = gArea.scrollHeight;
+        fArea.scrollTop = fArea.scrollHeight;
+
+        if (messages.length > 0) {
+            const last = messages[messages.length - 1];
+            document.getElementById('elderSender').textContent = last.sender;
+            document.getElementById('elderContent').textContent = last.content;
         }
 
-        // 채팅 메시지 렌더링
-        function renderChatMessages() {
-            const guardianList = document.getElementById('guardianChatList');
-            const familyList = document.getElementById('familyChatList');
-            
-            guardianList.innerHTML = '';
-            familyList.innerHTML = '';
+        renderElderMsgList();
+    }
 
-            messages.forEach(msg => {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = msg.isGuardian ? 'msg me' : 'msg';
-                msgDiv.innerHTML = `
-                    <div class="msg-header">${msg.sender} · ${msg.time}</div>
-                    <div class="msg-bubble">${msg.content}</div>
-                `;
-                guardianList.appendChild(msgDiv.cloneNode(true));
+    function makeBubble(msg, isMe) {
+        const div = document.createElement('div');
+        div.className = isMe ? 'msg me' : 'msg';
+        div.innerHTML = `
+            <div class="msg-header">${msg.sender} · ${msg.time}</div>
+            <div class="msg-bubble">${msg.content}</div>
+        `;
+        return div;
+    }
 
-                // 가족 채팅은 반대로
-                const familyMsgDiv = document.createElement('div');
-                familyMsgDiv.className = !msg.isGuardian ? 'msg me' : 'msg';
-                familyMsgDiv.innerHTML = `
-                    <div class="msg-header">${msg.sender} · ${msg.time}</div>
-                    <div class="msg-bubble">${msg.content}</div>
-                `;
-                familyList.appendChild(familyMsgDiv);
-            });
+    // ── 어르신 메시지 목록 ────────────────────────────────────
+    function renderElderMsgList() {
+        const area = document.getElementById('elderMsgListArea');
+        area.innerHTML = '';
+        [...messages].reverse().forEach(msg => {
+            const item = document.createElement('div');
+            item.style.cssText = 'background:white;border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,0.07);border:1px solid #eef0ff;';
+            item.innerHTML = `
+                <div style="font-size:18px;color:#999;margin-bottom:8px;">${msg.sender}</div>
+                <div style="font-size:22px;line-height:1.6;color:#1a1a1a;">${msg.content}</div>
+                <div style="font-size:16px;color:#ccc;margin-top:8px;">${msg.time}</div>
+            `;
+            area.appendChild(item);
+        });
+    }
 
-            // 스크롤 하단으로
-            guardianList.scrollTop = guardianList.scrollHeight;
-            familyList.scrollTop = familyList.scrollHeight;
+    // ── 메시지 전송 ───────────────────────────────────────────
+    function sendGuardianMsg() {
+        const input = document.getElementById('guardianMsgInput');
+        const text = input.value.trim();
+        if (!text) return;
+        pushMessage('보호자 (나)', text, true);
+        input.value = '';
+    }
 
-            // 어르신 화면 업데이트 (최신 메시지)
-            if (messages.length > 0) {
-                const latestMsg = messages[messages.length - 1];
-                document.getElementById('elderMsgSender').textContent = latestMsg.sender;
-                document.getElementById('elderMsgContent').textContent = latestMsg.content;
-            }
+    function sendFamilyMsg() {
+        const input = document.getElementById('familyMsgInput');
+        const text = input.value.trim();
+        if (!text) return;
+        pushMessage('딸 (김민지)', text, false);
+        input.value = '';
+    }
+
+    function sendQuickMsg(text)       { document.getElementById('guardianMsgInput').value = text; sendGuardianMsg(); }
+    function sendFamilyQuickMsg(text) { document.getElementById('familyMsgInput').value  = text; sendFamilyMsg();   }
+
+    function pushMessage(sender, content, isGuardian) {
+        const now = new Date();
+        const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+        messages.push({ sender, content, time, isGuardian });
+        renderChats();
+
+        const shortName = sender.split(' ')[0];
+        if (!checkedMembers.includes(shortName)) {
+            checkedMembers.push(shortName);
+            checkCount++;
+            updateElderHeader();
         }
+    }
 
-        // 보호자 메시지 전송
-        function sendGuardianMsg() {
-            const input = document.getElementById('guardianMsgInput');
-            const content = input.value.trim();
-            
-            if (!content) return;
+    // ── 어르신 화면 갱신 ─────────────────────────────────────
+    function updateElderHeader() {
+        document.getElementById('elderCount').textContent = checkCount;
+        document.getElementById('elderMembers').textContent = checkedMembers.join(', ');
+        const labels = checkedMembers.map(n => {
+            if (n.includes('철수')) return '아들';
+            if (n.includes('민지') || n.includes('딸')) return '딸';
+            if (n.includes('보호자')) return '보호자';
+            return n;
+        });
+        document.getElementById('elderNames').textContent = labels.join('·');
+    }
 
-            const now = new Date();
-            const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+    // ── 화면 전환 ────────────────────────────────────────────
+    function switchGuardian(viewId) {
+        document.querySelectorAll('#guardianDashboard, #guardianChat, #guardianAlerts')
+            .forEach(v => v.classList.add('hidden'));
+        document.getElementById(viewId).classList.remove('hidden');
+    }
 
-            messages.push({
-                sender: '보호자 (나)',
-                content: content,
-                time: time,
-                isGuardian: true
-            });
+    function switchElder(viewId) {
+        document.querySelectorAll('#elderHome, #elderMsgList')
+            .forEach(v => v.classList.add('hidden'));
+        document.getElementById(viewId).classList.remove('hidden');
+    }
 
-            input.value = '';
-            renderChatMessages();
-            
-            // 확인 카운트 증가
-            if (!checkedMembers.includes('보호자 (나)')) {
-                checkCount++;
-                checkedMembers.push('보호자 (나)');
-                updateElderScreen();
-            }
-        }
+    // ── 토스트 ────────────────────────────────────────────────
+    function showToast(id, msg) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 2000);
+    }
 
-        // 가족 메시지 전송
-        function sendFamilyMsg() {
-            const input = document.getElementById('familyMsgInput');
-            const content = input.value.trim();
-            
-            if (!content) return;
+    // ── 건강 데이터 시뮬레이션 ───────────────────────────────
+    function simulateHealth() {
+        const steps = (Math.floor(Math.random() * 400) + 1100).toLocaleString();
+        const bpm   = Math.floor(Math.random() * 18) + 66;
+        document.getElementById('activityValue').textContent = `${steps} 걸음`;
+        document.getElementById('heartValue').textContent    = `${bpm} bpm`;
+        const now = new Date();
+        document.getElementById('lastUpdate').textContent =
+            `마지막 업데이트: ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+    }
 
-            const now = new Date();
-            const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
-
-            messages.push({
-                sender: '딸 (김민지)',
-                content: content,
-                time: time,
-                isGuardian: false
-            });
-
-            input.value = '';
-            renderChatMessages();
-        }
-
-        // 빠른 답장
-        function sendQuickMsg(text) {
-            document.getElementById('guardianMsgInput').value = text;
-            sendGuardianMsg();
-        }
-
-        function sendFamilyQuickMsg(text) {
-            document.getElementById('familyMsgInput').value = text;
-            sendFamilyMsg();
-        }
-
-        // 화면 전환
-        function showGuardianDashboard() {
-            document.getElementById('guardianDashboard').classList.remove('hidden');
-            document.getElementById('guardianChat').classList.add('hidden');
-            
-            // 확인 카운트 증가
-            if (!checkedMembers.includes('보호자 (나)')) {
-                checkCount++;
-                checkedMembers.push('보호자 (나)');
-                updateElderScreen();
-            }
-        }
-
-        function showGuardianChat() {
-            document.getElementById('guardianDashboard').classList.add('hidden');
-            document.getElementById('guardianChat').classList.remove('hidden');
-        }
-
-        // 어르신 화면 업데이트
-        function updateElderScreen() {
-            document.getElementById('elderCheckCount').textContent = checkCount;
-            document.getElementById('elderMemberDetail').textContent = checkedMembers.join(', ');
-            
-            // 간단한 이름 표시
-            const shortNames = checkedMembers.map(name => {
-                if (name.includes('아들')) return '아들';
-                if (name.includes('딸')) return '딸';
-                if (name.includes('보호자')) return '보호자';
-                return name;
-            }).join('·');
-            
-            document.getElementById('elderMemberNames').textContent = shortNames;
-        }
-
-        // 건강 데이터 시뮬레이션 (5초마다 업데이트)
-        function simulateHealthData() {
-            const steps = Math.floor(Math.random() * 500) + 1000;
-            const bpm = Math.floor(Math.random() * 20) + 65;
-            
-            document.getElementById('activityValue').textContent = `${steps.toLocaleString()} 걸음`;
-            document.getElementById('heartValue').textContent = `${bpm} bpm`;
-            
-            // 마지막 업데이트 시간
-            const now = new Date();
-            document.getElementById('lastUpdate').textContent = 
-                `마지막 업데이트: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
-        }
-
-        // 초기화 및 주기적 업데이트
-        init();
-        setInterval(simulateHealthData, 5000);
-    </script>
+    init();
+</script>
 </body>
 </html>
