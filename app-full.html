@@ -3,50 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>가족 케어 앱 - 완전판</title>
+    <title>가족 케어 앱 - MVP 데모</title>
     <link rel="stylesheet" href="app-styles.css">
 </head>
 <body>
     <div class="page-header">
         <div class="page-title">가족 케어 앱</div>
-        <div class="page-subtitle">실시간 건강 모니터링 · 가족 채팅 · 스마트 알림</div>
+        <div class="page-subtitle">워치 건강 모니터링 · 가족 공동 대응 · 스마트 알림</div>
     </div>
 
     <div class="demo-container">
-        <!-- 보호자 앱 -->
+        <!-- 가족 케어 앱 -->
         <div class="phone-wrapper">
-            <div class="phone-label">보호자 앱</div>
-            <div class="phone" id="guardianPhone">
+            <div class="phone-label">가족 케어 앱 (보호자)</div>
+            <div class="phone">
                 <div class="status-bar">
                     <span class="status-time">9:41</span>
                     <div class="status-icons"><span>LTE</span><span>📶</span><span>🔋</span></div>
                 </div>
-                <div class="screen" id="guardianScreen"></div>
-            </div>
-        </div>
-
-        <!-- 가족 채팅 -->
-        <div class="phone-wrapper">
-            <div class="phone-label">가족 채팅 (다른 가족)</div>
-            <div class="phone" id="familyPhone">
-                <div class="status-bar">
-                    <span class="status-time">9:41</span>
-                    <div class="status-icons"><span>LTE</span><span>📶</span><span>🔋</span></div>
-                </div>
-                <div class="screen" id="familyScreen"></div>
+                <div class="screen" id="careScreen"></div>
             </div>
         </div>
 
         <!-- 어르신 앱 -->
         <div class="phone-wrapper">
             <div class="phone-label">어르신 앱</div>
-            <div class="phone" id="elderPhone">
+            <div class="phone">
                 <div class="status-bar">
                     <span class="status-time">9:41</span>
                     <div class="status-icons"><span>LTE</span><span>📶</span><span>🔋</span></div>
                 </div>
                 <div class="screen" id="elderScreen"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- 데모 시나리오 컨트롤 -->
+    <div class="demo-control">
+        <div class="demo-control-title">데모 시나리오</div>
+        <div class="demo-steps">
+            <div class="demo-step">
+                <div class="step-num">1</div>
+                <div class="step-desc">워치 데이터(심박수·걸음수·수면)를 가족이 실시간으로 확인합니다</div>
+            </div>
+            <div class="demo-step">
+                <div class="step-num">2</div>
+                <div class="step-desc">이상 감지 시 가족 전체에 알림 발송 → 채팅으로 즉시 공동 대응합니다</div>
+            </div>
+            <div class="demo-step">
+                <div class="step-num">3</div>
+                <div class="step-desc">어르신은 '가족이 확인했어요' 화면으로 연결감을 느낍니다</div>
+            </div>
+        </div>
+        <div class="demo-buttons">
+            <button id="btn-trigger" class="demo-btn demo-btn-alert" onclick="demoTriggerAlert()">
+                ⚠️ 이상 알림 발생
+            </button>
+            <button id="btn-resolve" class="demo-btn demo-btn-resolve" onclick="demoResolve()" disabled>
+                ✓ 상황 해결
+            </button>
         </div>
     </div>
 
